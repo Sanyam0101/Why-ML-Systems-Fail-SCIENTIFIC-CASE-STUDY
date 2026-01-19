@@ -28,21 +28,27 @@ This definition ensures:
 
 ## 3. High-Level System Architecture
 
-User Activity
-↓
-Data Ingestion Layer
-↓
-Data Validation & Cleaning
-↓
-Feature Engineering (Time-Aware)
-↓
-Churn Prediction Model
-↓
-Decision Engine
-↓
-Retention Actions
-↓
-Monitoring & Feedback Loop
+│
+│  User Orders & App Usage │
+│  ────────────────────── ┼───────────────────────────────
+│                          ↓
+│  Data Ingestion Layer   │  (Events, Logs)
+│  ────────────────────── ┼───────────────────────────────
+│                          ↓
+│  Data Validation        │  (Missing, Delayed Data)
+│  ────────────────────── ┼───────────────────────────────
+│                          ↓
+│  Feature Pipeline       │  (Recency, Frequency, Trends)
+│  ────────────────────── ┼───────────────────────────────
+│                          ↓
+│  Churn Model            │  (Probability Score)
+│  ────────────────────── ┼───────────────────────────────
+│                          ↓
+│  Decision Engine        │  (Action Mapping)
+│  ────────────────────── ┼───────────────────────────────
+│                          ↓
+│  Retention Actions      │  (Calls, Discounts)
+│
 
 
 ---
@@ -68,6 +74,17 @@ Monitoring & Feedback Loop
 - Account deactivation flags
 - Refund outcomes
 - Cancellation events after churn
+
+- │
+│  Past Behavior           │  Prediction Time      │  Future Events
+│  ────────────────────── ┼────────────────────── ┼────────────────────────
+│  Orders                 │  Model Runs           │  Refund Issued
+│  Session Logs            │                       │  Account Deactivated
+│  Delivery Issues         │                       │  Cancellation Reason
+│
+│  ✔ Allowed Features      │                       │  ❌ Leakage if Used
+│
+
 
 ### Temporal Safeguard
 
@@ -98,6 +115,26 @@ Only information available at prediction time is used.
 ### Key Insight
 Recent behavior dominates lifetime aggregates when predicting churn.
 
+│
+│  Raw User Data          │
+│  ──────────────────────┼────────────────────────────────
+│                         ↓
+│  Recency Features       │  Last Order Time
+│  ──────────────────────┼────────────────────────────────
+│                         ↓
+│  Frequency Features     │  Orders (7 / 14 / 30 days)
+│  ──────────────────────┼────────────────────────────────
+│                         ↓
+│  Trend Features         │  Usage Increasing / Decreasing
+│  ──────────────────────┼────────────────────────────────
+│                         ↓
+│  Reliability Signals    │  Delivery / Payment Failures
+│  ──────────────────────┼────────────────────────────────
+│                         ↓
+│  Feature Vector         │
+│
+
+
 ---
 
 ## 7. Evaluation Strategy
@@ -124,6 +161,18 @@ Low Risk → No Action
 
 This ensures predictions directly influence outcomes.
 
+│
+│  Churn Probability      │
+│  ──────────────────────┼───────────────────────────────
+│                          ↓
+│  Score > 0.8            │  Retention Call
+│  ──────────────────────┼───────────────────────────────
+│  0.5 ≤ Score ≤ 0.8      │  Discount / Offer
+│  ──────────────────────┼───────────────────────────────
+│  Score < 0.5            │  No Action
+│
+
+
 ---
 
 ## 9. Monitoring & Retraining
@@ -135,6 +184,19 @@ This ensures predictions directly influence outcomes.
 ### Retraining Triggers
 - Time-based retraining
 - Drift-based alerts
+
+│
+│  Production Predictions │
+│  ──────────────────────┼───────────────────────────────
+│                          ↓
+│  Drift Detection        │  (Feature / Prediction Shift)
+│  ──────────────────────┼───────────────────────────────
+│                          ↓
+│  Performance Check     │
+│  ──────────────────────┼───────────────────────────────
+│                          ↓
+│  Retraining Trigger    │  (Time / Drift Based)
+│
 
 ---
 
