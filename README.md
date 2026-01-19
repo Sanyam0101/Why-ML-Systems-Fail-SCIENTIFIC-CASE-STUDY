@@ -54,6 +54,47 @@ Mathematically correct models may still be operationally useless.
 ### 2.3 Key Insight
 
 > A well-trained model can still solve the wrong problem.
+>
+> ┌────────────────────┐
+│  Business Problem  │
+│  (Vague / Clear?)  │
+└─────────┬──────────┘
+          ↓
+┌────────────────────┐
+│   Data Collection  │
+│  (Logs, Events)    │
+└─────────┬──────────┘
+          ↓
+┌────────────────────┐
+│ Data Validation &  │
+│ Quality Checks     │
+└─────────┬──────────┘
+          ↓
+┌────────────────────┐
+│ Feature Engineering│
+│ (Time-Aware?)      │
+└─────────┬──────────┘
+          ↓
+┌────────────────────┐
+│   Model Training   │
+│ (Algorithm Choice) │
+└─────────┬──────────┘
+          ↓
+┌────────────────────┐
+│   Evaluation       │
+│ (Business Metrics) │
+└─────────┬──────────┘
+          ↓
+┌────────────────────┐
+│   Deployment       │
+│ (Batch / Real-time)│
+└─────────┬──────────┘
+          ↓
+┌────────────────────┐
+│ Monitoring & Drift │
+│ Detection          │
+└────────────────────┘
+
 
 ---
 
@@ -109,6 +150,21 @@ User intent is dynamic. Features encoding historical averages fail to reflect cu
 ### 5.3 Key Insight
 
 > Features are hypotheses about behavior, not neutral transformations.
+>
+> Problem Definition  ❌  ← unclear objective
+        ↓
+Data Collection     ❌  ← missing / biased data
+        ↓
+Feature Engineering ❌  ← leakage / stale features
+        ↓
+Model Training      ✅  ← usually works
+        ↓
+Evaluation          ❌  ← wrong metrics
+        ↓
+Deployment          ❌  ← no decision logic
+        ↓
+Monitoring          ❌  ← no retraining
+
 
 ---
 
@@ -162,6 +218,14 @@ Models decay silently, leading to performance erosion.
 ### 8.3 Key Insight
 
 > ML models are living systems, not deploy-and-forget artifacts.
+>
+> Past Behavior         Prediction Time         Future Events
+─────────────|───────────────|────────────────────
+ Orders, logs         Model runs        Refunds, cancellations
+ Session data                            Account deactivation
+
+✔ Allowed features        ❌ Leakage if used
+
 
 ---
 
